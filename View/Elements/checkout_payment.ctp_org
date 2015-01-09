@@ -1,0 +1,152 @@
+<div class="panel panel-myshop">
+    <div class="panel-heading">
+        <h3>How would you like to pay?</h3>
+    </div>
+    <div class="panel-body">
+
+
+        <!--<div class="col-md-4">
+            <div class="checkbox">
+                <label>
+                    <input type="radio" checked="checked" name="paymentType" value="1"> <b>Cash</b>
+                </label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="checkbox">
+                <label>
+                    <input type="radio" name="paymentType" value="2"> <?php echo $this->Html->image('img_ae.jpg', array ('alt' => 'Paypal')); ?>
+                </label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="checkbox">
+                <label>
+                    <input type="radio" name="paymentType" value="2"> <?php echo $this->Html->image('img_ae.jpg', array ('alt' => 'Visa')); ?>
+                </label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="checkbox">
+                <label>
+                    <input type="radio" name="paymentType" value="2"> <?php echo $this->Html->image('img_ae.jpg', array ('alt' => 'Master Card')); ?>
+                </label>
+            </div>
+        </div>-->
+        <div class="row">
+            <div class="col-md-24">
+                <div class="alert alert-info" role="alert">
+                    <input type="radio" checked="checked" name="paymentType" value="2"> <b>Credit/Debit card</b>
+                </div>
+            </div>
+            <div class="col-md-24" id="cardPaymentSection">
+                <div class="">
+                    <div class="form-group">
+                        <label for="cardTypeSelect">Card type</label>
+                        <select class="form-control" id="cardTypeSelect" name="cardType">
+                            <option value="Mastercard">Mastercard</option>
+                            <option value="Visa">Visa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="">
+                    <div class="form-group">
+                        <label class="" for="cardNumber">Card number</label>
+                        <input type="text" class="form-control" id="cardNumber"">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"> Save my card for quicker re-ordering.
+                        </label>
+                    </div>
+                </div>
+
+                <p>Expiry date</p>
+                <div class="form-inline">
+                    <div class="form-group">
+                        <label class="sr-only" for="expMonth">Month</label>
+                        <select class="form-control" id="expMonth" name="expMonth">
+                            <option value="Mastercard">MM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="expYear">Year</label>
+                        <select class="form-control" id="expYear" name="expYear">
+                            <option value="Mastercard">YYYY</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="">
+                    <div class="form-group">
+                        <label class="" for="cardSecNumber">Security number</label>
+                        <input type="text" class="form-control" id="cardSecNumber"">
+                        <em>Last 3 digits of the number o the back of your card.</em>
+                    </div>
+                </div>
+
+                <div class="">
+                    <div class="form-group">
+                        <label class="" for="fName">First name</label>
+                        <input type="text" class="form-control" id="fName"">
+                    </div>
+                </div>
+
+                <div class="">
+                    <div class="form-group">
+                        <label class="" for="lName">Last name</label>
+                        <input type="text" class="form-control" id="lName"">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-24">
+                <div class="alert alert-info" role="alert">
+                    <input type="radio" name="paymentType" value="1"> <b>Cash</b>
+                </div>
+            </div>
+            <div class="col-md-24"></div>
+        </div>
+        <div class="col-md-24">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" id="termsConditions" name="terms_n_conditions" value="1"> I accept MyShop's terms and conditions, including the privacy policy & cookies policy
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function(e){
+
+            function getRadioValue () {
+                if( $('input[name=paymentType]:radio:checked').length > 0 ) {
+                    return $('input[name=paymentType]:radio:checked').val();
+                }
+                else {
+                    return 0;
+                }
+            }
+
+            var radio_button_value = getRadioValue();
+
+            $('input[name=paymentType]:radio').click( function() {
+                // Will get the newly selected value
+                radio_button_value = getRadioValue();
+
+                if(1 == radio_button_value) {
+                    $('#cardPaymentSection').hide();
+                } else {
+                    $('#cardPaymentSection').show();
+                }
+
+            });
+
+    });
+</script>
+

@@ -1,0 +1,10 @@
+<script type="text/javascript"
+        src="<?php echo $this->webroot; ?>assets/js/main.js"></script>
+<script type="text/javascript"
+        src="<?php echo $this->webroot; ?>assets/js/scripts_view.js"></script>
+<script type="text/javascript"
+        src="<?php echo $this->webroot; ?>js/src/common_view.js"></script>
+<script type="text/javascript"
+        src="<?php echo $this->webroot; ?>assets/js/jstorage.js"></script>
+<script type="text/javascript"
+        src="<?php echo $this->webroot; ?>assets/js/jstoragelib.js"></script>

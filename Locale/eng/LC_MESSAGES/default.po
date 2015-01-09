@@ -1,0 +1,14 @@
+msgid "Pointvalue"
+msgstr "Point Value Relation"
+
+msgid "Pointvalues"
+msgstr "Point Value Relation"
+
+msgid "pointvalue"
+msgstr "Point Value"
+
+msgid "Additional"
+msgstr "Food Item"
+
+msgid "Additionals"
+msgstr "Food Items"

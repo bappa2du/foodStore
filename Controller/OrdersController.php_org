@@ -1,0 +1,620 @@
+<?php
+
+App::uses('AppController', 'Controller');
+
+/**
+ * Orders Controller
+ *
+ * @property Order $Order
+ * @property PaginatorComponent $Paginator
+ */
+class OrdersController extends AppController {
+
+    /**
+     * Components
+     *
+     * @var array
+     */
+    public $components = array ('Paginator');
+
+    /**
+     * index method
+     *
+     * @return void
+     */
+    public function index() {
+        $this->Order->recursive = 0;
+        $this->paginate = array(
+            'maxLimit' => 999999999,
+            'limit' => 999999999
+        );
+        $this->set('orders', $this->Paginator->paginate());
+
+    }
+
+    public function orderList() {
+        $this->Order->recursive = 0;
+        $user = $this->UserAuth->getUser();
+        $this->paginate = array(
+            'maxLimit' => 999999999,
+            'limit' => 999999999,
+            'order' => array('created' => 'Desc'),
+            'conditions' => array('Order.created_by =' => $user['User']['email'])
+        );
+        $this->set('orders', $this->Paginator->paginate());
+
+    }
+
+    public function guestOrder()
+    {
+        $this->Order->recursive = 0;
+        $guestOrder = $this -> Session -> read("guestOrder");
+        $guestOrderEmail = $guestOrder['Order']['customer_email'];
+        $this->paginate = array(
+            'limit' => 1,
+            'order' => array('created' => 'Desc'),
+            'conditions' => array('Order.customer_email =' => $guestOrderEmail)
+        );
+
+        $this->set('orders', $this->Paginator->paginate());
+
+    }
+
+    public function printOrder($orderId)
+    {
+        $this->layout = 'ajax';
+        $this->Order->recursive = 1;
+        $this->paginate = array(
+            'limit' => 1,
+            'order' => array('created' => 'Desc'),
+            'conditions' => array('Order.id =' => $orderId)
+        );
+
+        $this->set('orders', $this->Paginator->paginate());
+    }
+
+    /**
+     * view method
+     *
+     * @throws NotFoundException
+     * @param string $id
+     * @return void
+     */
+    public function view($id = null) {
+        if (!$this->Order->exists($id)) {
+            throw new NotFoundException(__('Invalid order'));
+        }
+        $options = array ('conditions' => array ('Order.' . $this->Order->primaryKey => $id));
+        $this->set('order', $this->Order->find('first', $options));
+
+    }
+
+    public function orderView($id = null) {
+        if (!$this->Order->exists($id)) {
+            throw new NotFoundException(__('Invalid order'));
+        }
+        $options = array ('conditions' => array ('Order.' . $this->Order->primaryKey => $id));
+        $this->set('order', $this->Order->find('first', $options));
+
+    }
+
+    /**
+     * add method
+     *
+     * @return void
+     */
+    public function add() {
+        //var_dump($this->data);
+        if ($this->request->is('post')) {
+            $user = $this->UserAuth->getUser();
+            $this->Order->create();
+            $this->request->data['Order']['status'] = 'Processing';
+            $orderData = $this->Session->read('cart');
+            $this->request->data['Order']['restaurant_id'] = $orderData['restaurant']['id'];
+            $this->request->data['Order']['total_price'] = $orderData['total'];
+            if(!empty($user)) {
+                $this->request->data['created_by'] = $user['User']['email'];
+            }
+            if ($this->Order->save($this->request->data)) {
+
+                $data = $this->Session->read('cart');
+
+                $delivery = 'chefgenie.co.uk';
+                $orderNo = $this->Order->getLastInsertId();;
+                $orderAddress = 'Thai	Erawan<br/>629	Roundhai	Road<br/>Leeds	LS8';
+
+                $itemNPrice = null;
+                foreach($data['food'] as $item)
+                {
+                    $this->loadModel('OrderItem');
+                    $this->OrderItem->create();
+                    $orderItemData['OrderItem']['order_id'] = $orderNo;
+                    $orderItemData['OrderItem']['food_id'] = $item['id'];
+                    $orderItemData['OrderItem']['quantity'] = $item['orderQty'];
+                    $orderItemData['OrderItem']['price'] = $item['price'];
+                    $orderItemData['OrderItem']['lineItemTotal'] = $item['lineItemTotal'];
+                    $orderItemData['OrderItem']['item_name'] = $item['name'];
+                    $this->OrderItem->save($orderItemData);
+                    //debug($data['food']);die;
+                    //$itemNPrice = '<row><Ltd>1	x	no.3	Chicken	Satax</Ltd><Rtd>pounds	4,20</Rtd></row><row><Ltd>1	x	no.10	Guns	Chu	Pang	Tod</Ltd><Rtd>pounds	1,50</Rtd></row><row><Ltd>1	x	no.11	Guns	Hom	Pa	</Ltd><Rtd>Pounds	1.50</Rtd></row><row><Ltd>1	x	no.51	Gans	Inman	With (Beef)</Ltd><Rtd>Pounds	6,95</Rtd></row><row><Ltd>1	x	no.45	Gans	Kies	Wan With	(Chicken)</Ltd><Rtd>Pounds	6,95</Rtd></row><row><Ltd>1	x	no.42	Thai Gans	Oang	With	(Beef)</Ltd><Rtd>Pounds	6,95</Rtd></row><row><Ltd>3	x	no. 128	Khao	Hom	Mali</Ltd><Rtd>Pounds	5,25</Rtd></row>';
+                    $itemNPrice .= '<row><Ltd>'. $item['name'] .'</Ltd><Rtd>pounds	'. $item['lineItemTotal'] .'</Rtd></row>';
+                }
+                $deliveryCharge = 'Pounds	0,00';
+                $totalPayable = 'Pounds	'. $data['total'];
+                $customerInfo = $this->request->data['Order']['delivery_address'] .'<br/>Phone	'. $this->request->data['Order']['customer_mobile'];
+                $orderStatus = 'Accepted';
+                $deliveryTime = '60	Minutes';
+
+                // Start order API request
+                $this->_startOrder($delivery, $orderNo, $orderAddress, $itemNPrice, $deliveryCharge, $totalPayable, $customerInfo, $orderStatus, $deliveryTime);
+                // / End Start order API request
+                //die();
+                $this->Session->write("guestOrder", $this->request->data);
+                $this->Session->setFlash(__('The order has been saved.'));
+                $this->Session->delete('cart');
+                if(!empty($user))
+                {
+                    return $this->redirect(array ('action' => 'orderList'));
+                } else
+                {
+                    return $this->redirect(array ('action' => 'guestOrder'));
+                }
+
+            } else {
+                $this->Session->setFlash(__('The order could not be saved. Please, try again.'));
+            }
+        }
+
+    }
+
+    /**
+     * edit method
+     *
+     * @throws NotFoundException
+     * @param string $id
+     * @return void
+     */
+    public function edit($id = null) {
+        if (!$this->Order->exists($id)) {
+            throw new NotFoundException(__('Invalid order'));
+        }
+        if ($this->request->is(array ('post', 'put'))) {
+            if ($this->Order->save($this->request->data)) {
+                $this->Session->setFlash(__('The order has been saved.'));
+                return $this->redirect(array ('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('The order could not be saved. Please, try again.'));
+            }
+        } else {
+            $options             = array ('conditions' => array ('Order.' . $this->Order->primaryKey => $id));
+            $this->request->data = $this->Order->find('first', $options);
+        }
+
+    }
+
+    /**
+     * delete method
+     *
+     * @throws NotFoundException
+     * @param string $id
+     * @return void
+     */
+    public function delete($id = null) {
+        $this->Order->id = $id;
+        if (!$this->Order->exists()) {
+            throw new NotFoundException(__('Invalid order'));
+        }
+        //$this->request->allowMethod('post', 'delete');
+
+        if ($this->request->isPost()) {
+
+            if ($this->Order->delete()) {
+                $this->Session->setFlash(__('The order has been deleted.'));
+            } else {
+                $this->Session->setFlash(__('The order could not be deleted. Please, try again.'));
+            }
+        }
+
+        return $this->redirect(array ('action' => 'index'));
+
+    }
+
+    public function checkout() {
+        $this->loadModel('Restaurant');
+        $cartdata = $this->Session->read('cart');
+        $restaurant_id = $cartdata['restaurant']['id'];
+        $restaurant = '';
+        if(!empty($restaurant_id) && !empty($cartdata['food'])){
+            $restaurant = $this->Restaurant->find('first', array ('conditions' => array ('Restaurant.' .$this->Restaurant->primaryKey => $restaurant_id)));
+        }
+        $this->set(compact('cartdata', 'restaurant'));
+
+    }
+
+    public function ajaxAddToCart() {
+        $return_data = array ();
+        if ($this->request->is(array ('post', 'put'))) {
+            $food_id = empty($this->request->data['food_id']) ? 0 : $this->request->data['food_id'];
+            $action  = $this->request->data['action'];
+            $this->loadModel('Food');
+            $options = array ('conditions' => array ('Food.' . $this->Food->primaryKey => $food_id));
+            $food    = $this->Food->find('first', $options);
+
+            $total    = 0;
+            $subtotal = 0;
+            if (!empty($food) && in_array($action, array ('add', 'delete'))) {
+//            echo "<pre>";
+//            print_r($food);
+//            die();
+                $data = $this->Session->read('cart');
+
+                if (!empty($data['restaurant']['id']) && ($data['restaurant']['id'] == $food['Restaurant']['id'])) {
+                    $foodExist = false;
+
+                    foreach ($data['food'] as $key => $val) {
+                        if ($food['Food']['id'] == $val['id']) {
+                            switch ($action) {
+                                case 'add':
+                                    $orderQty = $val['orderQty'] + 1;
+                                    break;
+                                case 'delete':
+                                    $orderQty = $val['orderQty'] - 1;
+                                    break;
+                            }
+                            if ($orderQty < 1) {
+                                $orderQty = 0;
+                            }
+                            $data['food'][$key]['orderQty']      = $orderQty;
+                            $data['food'][$key]['lineItemTotal'] = $food['Food']['price'] * $data['food'][$key]['orderQty'];
+                            $foodExist                           = true;
+                        }
+
+                    }
+                    foreach ($data['food'] as $key => $val) {
+                        if ($data['food'][$key]['orderQty'] < 1) {
+                            unset($data['food'][$key]);
+                        }
+                    }
+
+
+                    if (!$foodExist) {
+                        $data['food'][] = array (
+                            'id'            => $food['Food']['id'],
+                            'name'          => $food['Food']['name'],
+                            'orderQty'      => 1,
+                            'price'         => $food['Food']['price'],
+                            'lineItemTotal' => $food['Food']['price'] * 1,
+                        );
+                    }
+
+                    foreach($data['food'] as $row){
+                        $subtotal += $row['price'] * $row['orderQty'];
+                    }
+                    $total         = $subtotal;
+
+                    $data['total'] = $total;
+                } else {
+                    $data = array (
+                        'restaurant' => array (
+                            'id'   => $food['Restaurant']['id'],
+                            'name' => $food['Restaurant']['name'],
+                        ),
+                        'food'       => array (
+                            array (
+                                'id'            => $food['Food']['id'],
+                                'name'          => $food['Food']['name'],
+                                'orderQty'      => 1,
+                                'price'         => $food['Food']['price'],
+                                'lineItemTotal' => $food['Food']['price'] * 1,
+                            )
+                        ),
+                        'total'      => $food['Food']['price']
+                    );
+                }
+                $this->Session->write('cart', $data);
+                $return_data['type'] = 'success';
+                $return_data['cart'] = $data;
+            } else {
+                $data                = $this->Session->read('cart');
+
+                if($data['restaurant']['id'] != $this->request->data['restaurant_id']){
+                    $data = array();
+                }
+                $return_data['type'] = 'success';
+                $return_data['cart'] = $data;
+            }
+        } else {
+            $return_data['type']    = 'error';
+            $return_data['message'] = 'Invalid method';
+        }
+
+        $this->autoRender = false;
+        $this->response->type('json');
+        $return_data      = json_encode($return_data);
+        $this->response->body($return_data);
+
+    }
+
+    private function _startOrder($delivery, $orderNo, $orderAddress, $itemNPrice, $deliveryCharge, $totalPayable, $customerInfo, $oredrStatus, $deliveryTime)
+    {
+
+         // POST url
+        $uri = 'https://184.183.154.249/pos_web_service/api/start_order';
+
+        // Set up and execute the curl process
+        /*$curl_handle = curl_init();
+
+        // or the file specified using CURLOPT_STDERR.
+        curl_setopt($curl_handle, CURLOPT_VERBOSE, true);
+        $verbose = fopen('php://temp', 'rw+');
+        curl_setopt($curl_handle, CURLOPT_STDERR, $verbose);
+        curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl_handle, CURLOPT_URL, $uri);
+        curl_setopt($curl_handle, CURLOPT_POST, 1);*/
+
+        // Data to print
+        $dataToBePrinted = 'Delivery:<br/>'. $delivery .'<br/><hr/>Order	no	.'. $orderNo .'<br/>'. $orderAddress .'<hr/>'. $itemNPrice.'<hr/><row><Ltd>Delivery:</Ltd><Rtd>'. $deliveryCharge .'</Rtd></row><row><Ltd>Total:</Ltd><Rtd>'. $totalPayable .'</Rtd></row><hr/><b>'. $oredrStatus .'</b><hr/><b>DELIVERY -'. $deliveryTime .'</b><hr/>Customer	info:<br/>'. $customerInfo .'<br/><b>Order	IS	PAID</b><br/>Signature:<br/><br/><hr/><br/><br/><hr/>Card	used: xxxxxxxxxx1512<hr/>Requested	For:<br/>ASAP	04-04-2014<hr/>Prey,	order	from customer:	13<hr/>MyShop	phone	no:	0814	243	7777<hr/>Your	WWW	is<br/>www.thai-erawan-158.aPp.just-eaf.co.uk<hr/><br/><br/><br/><br/>Accepted to<br/>20:10	01-01-2014<br/>Cust.	phone:<br/>07712221235';
+
+        /*debug($dataToBePrinted);//die;
+        //$_POST data key with value json string
+        curl_setopt($curl_handle, CURLOPT_POSTFIELDS, array(
+            'api_key' => '50ab307d440a23b301e32df3e7c30231',
+            'restaurant_id' => '100',
+            'order_no' => '23423',
+            'order_layout' => $dataToBePrinted
+        ));
+
+        curl_setopt($curl_handle, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+
+        // Apply Digest access authentication
+        $username = $this->userName_API;
+        $password = $this->password_API;
+
+        curl_setopt($curl_handle, CURLOPT_USERPWD, $username . ':' . $password);
+
+        if(!($buffer = curl_exec($curl_handle)))
+        {
+            echo 'Curl error: ' . curl_error($curl_handle);
+        }
+        else
+        {
+            //echo 'Operation completed without any errors';
+            //Get final CDR json data
+            echo($buffer);
+            unset($result);
+        }
+        // Close handle
+        curl_close($curl_handle);*/
+
+        // Dummy API service function call
+        $this->dummyAPIService($orderNo, $dataToBePrinted);
+
+        //debug($dataToBePrinted);die();
+    }
+
+    private function dummyAPIService($orderNo, $dataToBePrinted)
+    {
+
+        $APIPath = 'http://192.185.116.207/~winnexfa/myshop_api/service.php?ordrNo='.urlencode($orderNo).'&str='.urlencode($dataToBePrinted);
+        $ch = curl_init();
+
+        // Set query data here with the URL
+        curl_setopt($ch, CURLOPT_URL, $APIPath);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, '3');
+        $content = trim(curl_exec($ch));
+        curl_close($ch);
+
+    }
+
+    public function response($orderId, $status)
+    {
+        $this->Order->id = $orderId;
+        $this->Order->saveField('status', $status);
+    }
+
+
+
+
+
+    /*This function is Only for Postcode Api (Searching Address)*/
+    public function SPLGetFullAddressStep1($postalCode=null){
+
+        $this->layout = 'ajax';
+
+        ##################################################################
+        #You need to open an account which will send you a data key, goto:
+        #http://www.simplylookupadmin.co.uk/A2CustomerAccount/WebAccountCreateFromReseller.aspx?r=&id=4
+
+        $datakey = "W_F47A937588EC4F60A184639B1B3C60";
+
+
+        ##################################################################
+        # see http://www.simply-postcode-lookup.com/full_address_inline_ajax_section_list.htm
+        # for explanation for code
+        ##################################################################
+
+        $simplyserver = "http://www.simplylookupadmin.co.uk/xmlservice";
+        $usernameID = "";
+        $postcode = "";
+        $XMLData = "";
+        $data ="";
+
+        ##############################################################################
+        # When using an INTERNAL License (used in company by your employees), each user MUST be identified, so use cookie
+        # Not doing this is in breach of our End User License agreement
+        # If turned off then redirect to page explaining the restriction
+        # For External use the following code does nothing, the following section can be removed
+        ######################### Identify User START #################################
+        if (substr($datakey, 0, 2) == "I_")
+        {
+            # Internal KEY requires a User ID, so need a cookie, if turned off then terminate search
+
+            $usernameID="Not Set";
+            @$usernameID = $_COOKIE['usernameID'];
+            if ($usernameID == "")
+            {
+                @$IsSetCookieFlag = $_GET['set'];
+                if ($IsSetCookieFlag != 'yes') {
+                      // Set cookie
+                        #This will be unique enough, for 30 users! since any more will use System License
+                    $usernameID =date("ymd_gis",time());
+                    setcookie("usernameID",$usernameID,time()+(60*60*24*7));
+
+                      // Reload page
+                      $postcode = $postalCode;
+                      header ("Location: SPLGetFullAddressStep1.php?set=yes&postcode=".$postcode);
+                } else {
+                      // Check if cookie exists
+                      if (!empty($_COOKIE['usernameID'])) {
+                    $usernameID = $_COOKIE['usernameID'];
+                     } else {
+                    $CannotIdentifyUser="True";
+                     }
+                }
+            }
+        }
+        else
+        {
+            # Web use KEY does not require a User ID
+            $usernameID ="";
+        }
+        ########################## Identify User END #############################
+
+
+        ################################################
+        #So Get Data from SPL Web server:
+
+        header('Expires: Wed, 23 Dec 1980 00:30:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Pragma: no-cache');
+        header('Content-Type: text/xml');
+
+        $postcode = $postalCode;
+        $postcode = str_replace(" ", "", $postcode);
+
+        $XMLService = $simplyserver."/InlineComboSearch3.aspx?datakey=".$datakey."&postcode=".$postcode."&username=".$usernameID."&user=".urlencode($_SERVER['HTTP_USER_AGENT'])."&ip=".$_SERVER['REMOTE_ADDR'];
+
+        #Set Message when on Mobile
+        $XMLService = $XMLService."&textmob=Please%20Select%20Address";
+
+        #Set to 1 to show License status
+        $XMLService = $XMLService."&showlic=0";
+
+        #Set Number of lines in list
+        #Set to 0 to display Combo box
+        $XMLService = $XMLService."&lines=8";
+
+        #Future use
+        $XMLService = $XMLService."&style=1";
+
+        #Message at bottom of combo
+        #Set to nothing to remove
+        $XMLService = $XMLService."&text=Please%20Select%20Address";
+
+        #get XML
+        $DataToSend = file_get_contents($XMLService);
+
+        #var_dump($XMLService,$DataToSend);
+
+        $this->set('DataToSend',$DataToSend);
+    }
+
+    /*This function is Only for Postcode Api (Searching Address)*/
+    public function SPLGetFullAddressStep2($FullAddressIs=null){
+
+        $this->layout = 'ajax';
+
+        ##################################################################
+        #You need to open an account which will send you a data key, goto:
+        #http://www.simplylookupadmin.co.uk/A2CustomerAccount/WebAccountCreateFromReseller.aspx?r=&id=4
+
+        $datakey = "W_F47A937588EC4F60A184639B1B3C60";
+
+
+        ##################################################################
+        # see http://www.simply-postcode-lookup.com/full_address_inline_ajax_section_list.htm
+        # for explanation for code
+        ##################################################################
+
+        $simplyserver = "http://www.simplylookupadmin.co.uk/xmlservice";
+        $usernameID = "";
+        $postcode = "";
+        $XMLData = "";
+        $data ="";
+
+        ##############################################################################
+        # When using an INTERNAL License (used in company by your employees), each user MUST be identified, so use cookie
+        # Not doing this is in breach of our End User License agreement
+        # If turned off then redirect to page explaining the restriction
+        # For External use the following code does nothing, the following section can be removed
+        ######################### Identify User START #################################
+        if (substr($datakey, 0, 2) == "I_")
+        {
+            # Internal KEY requires a User ID, so need a cookie, if turned off then terminate search
+
+            $usernameID="Not Set";
+            @$usernameID = $_COOKIE['usernameID'];
+            if ($usernameID == "")
+            {
+                @$IsSetCookieFlag = $_GET['set'];
+                if ($IsSetCookieFlag != 'yes') {
+                      // Set cookie
+                        #This will be unique enough, for 30 users! since any more will use System License
+                    $usernameID =date("ymd_gis",time());
+                    setcookie("usernameID",$usernameID,time()+(60*60*24*7));
+
+                      // Reload page
+                      header ("Location: SPLGetFullAddressStep2.php?set=yes");
+                } else {
+                      // Check if cookie exists
+                      if (!empty($_COOKIE['usernameID'])) {
+                    $usernameID = $_COOKIE['usernameID'];
+                     } else {
+                    $CannotIdentifyUser="True";
+                     }
+                }
+            }
+        }
+        else
+        {
+            # Web use KEY does not require a User ID
+            $usernameID ="";
+        }
+        ########################## Identify User END #############################
+
+
+        ################################################
+        #So Get Data from SPL Web server:
+
+        header('Expires: Wed, 23 Dec 1980 00:30:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Pragma: no-cache');
+        header('Content-Type: text/xml');
+
+        $AddressID = $FullAddressIs;
+        $XMLService = $simplyserver . "/GetAddressRecord.aspx?datakey=" . $datakey . "&id=" . $AddressID . "&username=" . $usernameID."&AppID=36";
+
+        #get XML
+        @$XMLtoSend = file_get_contents($XMLService);
+
+        if (strpos($XMLtoSend,"<line1>"))
+        {
+            #return XML
+            #echo $XMLtoSend;
+            $this->set('XMLtoSend',$XMLtoSend);
+        }
+        else
+        {
+            #Noting to return, so return XML to stop error on client
+            #echo "<data></data>";
+            $this->set('XMLtoSend',"<data></data>");
+        }
+    }
+
+}

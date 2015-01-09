@@ -1,0 +1,136 @@
+<style>
+    #nav-bg {
+        background: url("<?php echo $this->webroot;?>Chefgenie/img/Nav-bg-right-left.png") repeat-x scroll 0 0 white;
+        height: 65px;
+        position: relative;
+    }
+
+    .popover {
+        position: absolute;
+        display: block;
+        float: left;
+        margin: 20px;
+    }
+
+    .popover.bottom {
+        margin-top: 86px;
+        margin-left: 360px;
+    }
+</style>
+<header id="header">
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-myshop navbar-fixed-top header-con" role="navigation">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <a class="logo" href="<?php echo $this->webroot ?>"><img
+                            src="/img/chefe-genie-logo.png" alt="chefe-genie-logo"
+                            title="logo" width="170px;"/></a>
+                </div>
+                <div class="col-md-14 col-sm-14 pull-right">
+                    <div class="row pull-right" style="margin-top:10px;">
+                        <?php
+                            $user = $this->UserAuth->getUser();
+                            if(empty($user))
+                            {
+                                ?>
+
+
+
+                                <a class="btn btn-booking btn-lg" href="<?php echo $this->webroot ?>join" id="mainmenu-item-join"><span>Join</span></a>
+                                <a rel="#sign-in-popup-wrapper" class="btn btn-booking btn-lg" id="guest-login-button" name="signin" href="<?php echo $this->webroot ?>login"><span>Sign in</span></a>
+
+                            <?php
+                            } else
+                            {
+                                ?>
+                                <!--                        <a href="<?php echo $this->webroot ?>restaurants" class="btn btn-booking btn-lg">
+                            my booking&nbsp;<span class="glyphicon glyphicon-shopping-cart"></span>
+                        </a>-->
+                                <a href="<?php echo $this->webroot ?>logout" class="btn btn-booking btn-lg">logout&nbsp;<span class="glyphicon glyphicon-off"></span></a>
+                            <?php } ?>
+                    </div>
+                    <div class="row" style="margin-top:76px;">
+                        <ul class="mainNav">
+                            <li class="nav-home">
+                                <a href="<?php echo $this->webroot ?>"><span class="glyphicon glyphicon-home"></span></a>
+                            </li>
+                            <li>
+                                <span class="fa fa-glass"></span>
+                                <a href="<?php echo $this->webroot ?>restaurants" title="Help"><span>Restaurants</span></a>
+                            </li>
+                            <?php if(!empty($user))
+                            {
+                                ?>
+                                <li class="active">
+                                    <span class="fa fa-list"></span>
+                                    <a href="<?php echo $this->webroot ?>orders/orderList" title="My Order"><span>My Order</span></a>
+                                </li>
+                            <?php } ?>
+
+                            <?php if(!empty($user))
+                            {
+                                ?>
+                                <li>
+                                    <span class="fa fa-shopping-cart"></span>
+                                    <?php
+                                        echo $this->Html->link('Go to checkout', array('controller' => 'orders', 'action' => 'checkout'), array('escape' => false, 'data-href' => Router::url(array('controller' => 'orders', 'action' => 'checkout', '?' => array('layout' => 'ajax'))), 'data-holder' => '#ajaxPage'));
+                                    ?>
+                                </li>
+                                <!--<li class="active">
+                                    <a href="<?php /*echo $this->webroot */ ?>account" title="My Account"><span>My Account</span></a>
+                                </li>-->
+                            <?php } ?>
+                            <li>
+                                <span class="fa fa-support"></span>
+                                <a href="<?php echo $this->webroot ?>contact" title="Help"><span>Contact/Help</span></a>
+                            </li>
+                            <!--                            <li>
+                                                            <a class="homeNavOrderTracking" href="<?php echo $this->webroot ?>ordertracking" title="Order Tracking"><span>Order Tracking</span></a>
+                                                        </li>-->
+                        </ul>
+                        <div id="item_add_mgs" class="popover bottom" style="display: none">
+                            <div class="arrow"></div>
+                            <div class="popover-content">
+                                <p>
+                                    Added to your cart.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--
+    <section id="nav-bg"
+            style="position: fixed; z-index: 100000; width: 100%;">
+            <div class="container">
+                    <nav class="navbar navbar-bg " role="navigation"
+                            style="background: none;">
+                            <div class="navbar-header">
+                                    <button type="button" class="navbar-toggle collapsed"
+                                            data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                                            <span class="sr-only">Toggle navigation</span> <span
+                                                    class="icon-bar"></span> <span class="icon-bar"></span> <span
+                                                    class="icon-bar"></span>
+                                    </button>
+                            </div>
+
+                            <div class="collapse navbar-collapse"
+                                    id="bs-example-navbar-collapse-1">
+                                    <ul class="nav navbar-nav star-symbol">
+                                            <li><a href="<?php echo $this->webroot ?>">HOME</a></li>
+                                            <li><a href="<?php echo $this->webroot ?>restaurants">OUR
+                                                            RESTAURANT</a></li>
+                                            <li><a href="#">MENU</a></li>
+                                            <li><a href="#">CONTACT</a></li>
+                                    </ul>
+
+                            </div>
+                    </nav>
+            </div>
+    </section>
+    -->
+    <!-- /.nav-bg-->
+</header>

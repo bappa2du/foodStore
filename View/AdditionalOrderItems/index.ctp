@@ -1,0 +1,46 @@
+<div class="panel panel-default">
+    <div class="panel-heading"><h6 class="panel-title">
+            <i class="icon-table"></i><?php echo __('Additional Order Items'); ?></h6></div>
+    <div class="datatable">
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th><?php echo $this->Paginator->sort('id'); ?></th>
+                <th><?php echo $this->Paginator->sort('order_item_id'); ?></th>
+                <th><?php echo $this->Paginator->sort('additional_id'); ?></th>
+                <th><?php echo $this->Paginator->sort('title'); ?></th>
+                <th><?php echo $this->Paginator->sort('price'); ?></th>
+                <th><?php echo $this->Paginator->sort('created'); ?></th>
+                <th><?php echo $this->Paginator->sort('modified'); ?></th>
+                <th><?php echo $this->Paginator->sort('created_by'); ?></th>
+                <th><?php echo $this->Paginator->sort('modified_by'); ?></th>
+                <th class="actions"><?php echo __('Actions'); ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach($additionalOrderItems as $additionalOrderItem): ?>
+                <tr>
+                    <td><?php echo h($additionalOrderItem['AdditionalOrderItem']['id']); ?>&nbsp;</td>
+                    <td>
+                        <?php echo $this->Html->link($additionalOrderItem['OrderItem']['title'], array('controller' => 'order_items', 'action' => 'view', $additionalOrderItem['OrderItem']['id'])); ?>
+                    </td>
+                    <td>
+                        <?php echo $this->Html->link($additionalOrderItem['Additional']['name'], array('controller' => 'additionals', 'action' => 'view', $additionalOrderItem['Additional']['id'])); ?>
+                    </td>
+                    <td><?php echo h($additionalOrderItem['AdditionalOrderItem']['title']); ?>&nbsp;</td>
+                    <td><?php echo h($additionalOrderItem['AdditionalOrderItem']['price']); ?>&nbsp;</td>
+                    <td><?php echo h($additionalOrderItem['AdditionalOrderItem']['created']); ?>&nbsp;</td>
+                    <td><?php echo h($additionalOrderItem['AdditionalOrderItem']['modified']); ?>&nbsp;</td>
+                    <td><?php echo h($additionalOrderItem['AdditionalOrderItem']['created_by']); ?>&nbsp;</td>
+                    <td><?php echo h($additionalOrderItem['AdditionalOrderItem']['modified_by']); ?>&nbsp;</td>
+                    <td class="actions">
+                        <?php echo $this->Html->link('<i class="icon-eye3"></i>', array('action' => 'view', $additionalOrderItem['AdditionalOrderItem']['id']), array('escape' => false)); ?>
+                        <?php echo $this->Html->link('<i class="icon-pencil"></i>', array('action' => 'edit', $additionalOrderItem['AdditionalOrderItem']['id']), array('escape' => false)); ?>
+                        <?php echo $this->Form->postLink('<i class="icon-cancel"></i>', array('action' => 'delete', $additionalOrderItem['AdditionalOrderItem']['id']), array('escape' => false), __('Are you sure you want to delete # %s?', $additionalOrderItem['AdditionalOrderItem']['id'])); ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>

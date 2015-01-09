@@ -1,0 +1,559 @@
+body {
+    background: url("../img/background.jpg") repeat;
+    /*background: url("../image/layout.jpg");*/
+    padding-top: 50px;
+}
+
+a {
+    color: #ffffff;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #0066ff;
+}
+
+.check-one {
+    display: inline-block;
+    font-size: 50px;
+    color: #428a62;
+}
+
+.check-one > a:hover {
+    color: #0066ff;
+}
+
+.check-two {
+    display: inline-block;
+    color: #428a62;
+    font-weight: bold;
+    padding-right: 10px;
+}
+
+@media only screen and (max-width: 767px) {
+    .coustome {
+        position: absolute;
+        top: -10px !important;
+        left: 85px !important;
+        width: 50%;
+        border: none;
+    }
+
+    .coustomr-header {
+        position: relative;
+    }
+}
+
+.hd {
+    color: #ffffff;
+    font-size: 18px;
+}
+
+.txt {
+    color: #189c2b;
+}
+
+.takeaway {
+    background-color: #ffffff;
+    border-radius: 8px;
+    text-align: center;
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif
+}
+
+.cuisines {
+    padding-left: 10px;
+    text-align: left;
+}
+
+.shop {
+    color: #ffffff;
+}
+
+.navbar-inverse {
+    background-color: #428a62;
+    border-color: #428a62;
+    /*opacity: 0.9;*/
+}
+
+.navbar-inverse
+.navbar-nav > li > a {
+    color: #ffffff;
+}
+
+.navbar-inverse
+.navbar-brand {
+    color: #ffffff;
+}
+
+.carousel-text {
+    position: absolute;
+    font-size: 100%;
+    font-weight: bold;
+    margin-top: 13%;
+    margin-left: 24%;
+    color: #ffffff;
+    z-index: 1000;
+}
+
+.carousel-search {
+    position: absolute; /* relative */
+    width: 38%;
+    font-size: 100%; /* 1.5em */
+    /*font-weight: bold;*/
+    padding: 5px 5px 5px 5px;
+    /*margin: 30px 10px 10px -70px;*/
+    /*margin-left: -12px;         *//* -10px; */
+    margin-top: 20%; /* 20px */
+    margin-left: 20%;
+    /*color: #ffffff;*/
+    background-color: #3a7d50; /* da2127 */
+    text-shadow: 0px 1px 2px #bbb;
+    -webkit-box-shadow: 0px 2px 4px #888;
+    -moz-box-shadow: 0px 2px 4px #888;
+    box-shadow: 0px 2px 4px #888;
+    z-index: 1000;
+    margin-bottom: -300px;
+    /*font-family: fontfive;*/
+}
+
+.contact-box {
+    background-color: #005526;
+    border: 1px solid #008f41;
+    margin-bottom: 2px;
+    color: #ffffff
+}
+
+.footer-one {
+    background-color: #096733;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.footer-one .container {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.nav > li > a:hover,
+.nav > li > a:focus {
+    background: none;
+    color: #ffffff;
+}
+
+.logon-box {
+    background-color: #EEEEEE;
+    opacity: .8;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.divider {
+    height: 270px;
+    border-left: 1px solid #ccc;
+    display: block;
+    float: left;
+    width: 1px;
+    margin: 25px 0px 25px 18px;
+}
+
+.catagories-menu-bg > li {
+    /*background-image: url(img/catagories-divider.png);*/
+    background-image: url(../img/catagories-divider.png);
+    background-position: bottom;
+    background-repeat: no-repeat;
+}
+
+/*=============================/mustafa===========================*/
+
+/*=============================mizan===========================*/
+.login-form {
+    background: url(../img/background.jpg) repeat;
+    border-radius: 5px;
+}
+
+.forget {
+    color: #ac321a;
+}
+
+.login {
+    color: #099649;
+}
+
+/*=============================/mizan===========================*/
+
+/*=============================rabbi===========================*/
+* hr {
+    border-color: #CCCCCC;
+}
+
+.heading {
+    color: #006600;
+    font-family: Tahoma;
+    font-size: 36px;
+}
+
+.result {
+    background: url(../img/restaurant.jpg) repeat;
+    border-radius: 5px;
+    padding-bottom: 8px;
+}
+
+.result h2 {
+    color: #006600;
+    font-family: Tahoma;
+    font-size: 18px;
+}
+
+.result hr {
+    border-color: #CCCCCC;
+    margin: 14px 0px;
+}
+
+.checked {
+    color: #00FF00;
+}
+
+.result p {
+    text-align: center;
+    font-family: Tahoma;
+    font-size: 14px;
+    color: #CCCCCC;
+    padding: 0px;
+    margin-top: 10px;
+    margin-bottom: -8px;
+}
+
+.search {
+    margin-left: 70px;
+    margin-top: 20px;
+}
+
+.f6 {
+    background: url(../img/restaurant.jpg) repeat;
+    border-radius: 10px;
+    padding: 1px 9px 5px;
+}
+
+.f6 h2 {
+    padding: 0px;
+    color: #006600;
+    margin-top: 2px;
+}
+
+.f6 hr {
+    padding: 0px;
+    margin: 9px 0px;
+}
+
+.bangladesh {
+    padding: 0px;
+    margin: 0px;
+    margin-top: -10px;
+    margin-left: -20px;
+}
+
+.bangladesh h5 {
+    color: #000000;
+    font-weight: bold;
+}
+
+.top {
+    margin-top: -20px;
+    margin-right: 15px;
+}
+
+/*===============*/
+.coustome-bredcume {
+    background: none;
+    border-radius: 0px;
+}
+
+.coustome-bredcume > li {
+}
+
+.coustome-bredcume > li a span {
+    font-size: 50px;
+
+}
+
+.coustome-bredcume > li a small {
+    display: block;
+    float: right;
+    margin-top: 20px;
+    width: 89px;
+}
+
+.coustome-bredcume > li a {
+    text-decoration: none;
+    color: #137c42;
+}
+
+.coustome-bredcume > .active a {
+    color: #CCC;
+}
+
+.coustome-bredcume > li + li:before {
+    content: "";
+}
+
+.coustome-bredcume > li + li:after {
+    content: "";
+}
+
+.registration {
+    background: none repeat scroll 0 0 rgba(253, 253, 253, 0.5);
+    border: 1px solid #e3dbdb;
+    padding-bottom: 30px;
+}
+
+.order-from {
+    padding-bottom: 30px;
+}
+
+.stepname {
+    font-size: 18px;
+    font-family: Tahoma, Geneva, sans-serif;
+    font-weight: normal;
+    color: #c95d0d;
+    border-bottom: 1px solid #e2e2e2;
+    padding: 5px 0 10px;
+}
+
+/*=============================/rabbi===========================*/
+
+.input-myshop {
+    height: 50px
+}
+
+/*=================================product category:view css==========================*/
+.product-view {
+    /*background: none repeat scroll 0 0 rgba(250, 250, 250, 0.4);*/
+    background: url(../img/restaurant.jpg) repeat;
+    border: 1px solid rgba(230, 230, 230, 0.8);
+    border-radius: 8px;
+    margin-bottom: 30px;
+    padding: 10px;
+}
+
+.product-view h2 {
+    color: #428a62; /* #42bf04 */
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 25px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.product-view hr {
+    margin-top: 5px;
+}
+
+hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.cart-dot {
+    border-bottom: 1px solid #ffffff;
+    padding-bottom: 10px;
+}
+
+.product-view .address-line {
+    color: #999999;
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 11px;
+}
+
+.product-dtl {
+    font-weight: bold;
+}
+
+.glyphicon-time:before {
+    padding: 0 5px;
+}
+
+.glyphicon-shopping-cart:before {
+    padding: 0 5px;
+}
+
+.glyphicon-map-marker:before {
+    padding: 0 5px;
+}
+
+.green {
+    color: #46a218;
+    cursor: pointer;
+}
+
+.gray {
+    color: #949494;
+    cursor: pointer;
+}
+
+.product-img a img {
+    border: 1px solid #CCC;
+}
+
+.bangladesh {
+}
+
+.bangladesh h5 {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #2a2a2a;
+}
+
+.bangladesh small {
+    color: #333333;
+    font-family: Tahoma, Geneva, sans-serif;
+    color: #333333;
+    font-size: 12px;
+}
+
+.branch {
+    color: #999999;
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 11px;
+}
+
+/* Catagories view -- */
+.catagories-bg {
+    background: #f9f9f9;
+    border: 1px solid #e3dbdb;
+}
+
+.mid-padding {
+    padding: 0;
+    width: 188px;
+}
+
+.catagories-menu-bg {
+    background: #f0f0f0;
+}
+
+.catagories-menu-bg > li.active > a, .catagories-bg > li.active > a:hover, .catagories-bg > li.active > a:focus {
+    background: #f8f8f8;
+    color: #000;
+    cursor: pointer;
+    border-style: none;
+}
+
+.catagories-menu-bg > li.active > a:hover {
+    background-color: #0da150;
+    color: #000;
+    cursor: pointer;
+}
+
+.catagories-menu-bg > li a:hover {
+    background: url("../img/catagories-hover.png") no-repeat scroll 172px 10px rgba(0, 0, 0, 0);
+}
+
+.catagories-menu-bg > li > a {
+    border-radius: 0px;
+}
+
+.catagories-menu-bg > li {
+    background-image: url(../img/catagories-divider.png);
+    background-position: bottom;
+    background-repeat: no-repeat;
+}
+
+.catagories-menu-bg > li:last-child a:hover {
+    background: none;
+}
+
+.catagories-menu-bg > li:last-child {
+    background-image: none;
+}
+
+.catagories-menu-bg > li > a {
+    color: #08692d;
+    font-family: open sans;
+    font-weight: 500;
+    font-size: 15px;
+    text-transform: uppercase;
+}
+
+.content-sub-title {
+    color: #000000;
+    font-size: 16px;
+    font-family: Tahoma, Geneva, sans-serif;
+}
+
+.content-sub-message {
+    color: #404040;
+    font-size: 14px;
+    font-family: Tahoma, Geneva, sans-serif;
+}
+
+.table.content-sub-table tr > td {
+    border-top: none;
+    border-bottom: 1px solid #ffffff;
+}
+
+/*------------- ORDER PAGE ---- */
+.order {
+    background: none repeat scroll 0 0 rgba(253, 253, 253, 0.5);
+    border: 1px solid #466a34;
+}
+
+.order-title {
+    background: none repeat scroll 0 0 #428a62; /* 409914 */
+    color: #FFFFFF;
+    font-family: open sans;
+    font-size: 14px;
+    padding: 1px 0 5px 20px;
+}
+
+.order-title h4 {
+}
+
+.table.table-checkout tr > td {
+    border-top: none;
+}
+
+.discount {
+    background: none repeat scroll 0 0 rgba(251, 251, 251, 0.5);
+}
+
+.badge-icon {
+    margin-top: -30px;
+    color: #F00;
+}
+
+.rotate {
+    position: absolute;
+    left: 82%;
+    -webkit-transform: rotate(50deg);
+    -moz-transform: rotate(50deg);
+    -o-transform: rotate(50deg);
+    writing-mode: lr-tb;
+    top: 58%;
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.total-text-bold {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.btn-lg, .btn-group-lg > .btn {
+    padding: 5px 44px;
+    border-radius: 0px;
+    background: #428a62; /*  39900d */
+    border: 1px solid #3a8f0f;
+}
+
+/*=================================/product category:view css==========================*/
+
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+    background-color: #428a62;
+}
+
+.btn-success {
+    background-color: #428a62 !important;
+}
